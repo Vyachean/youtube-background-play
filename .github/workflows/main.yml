@@ -32,6 +32,7 @@ jobs:
           fi
 
       - name: Create GitHub Release
+        id: create_release  # Добавляем id для использования в следующем шаге
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,9 +43,11 @@ jobs:
           prerelease: true
 
       - name: Upload Release Assets
+        if: steps.create_release.outputs.id != ''  # Условие для выполнения, только если релиз создан
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.version }}
+          release_id: ${{ steps.create_release.outputs.id }}  # Используем ID релиза
           files: |
             .output/**
         env:
