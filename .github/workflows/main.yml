@@ -31,6 +31,11 @@ jobs:
             exit 0
           fi
 
+      - name: Create Tag
+        run: |
+          git tag v${{ env.version }}
+          git push origin v${{ env.version }}
+
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
