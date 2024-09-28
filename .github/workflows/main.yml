@@ -25,7 +25,7 @@ jobs:
         id: version
         run: |
           VERSION=$(jq -r .version package.json)
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_ENV
           if git tag | grep -q "$VERSION"; then
             echo "Version $VERSION already exists."
             exit 0
@@ -36,15 +36,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          release_name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ env.version }}
+          release_name: v${{ env.version }}
           draft: false
           prerelease: true
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ env.version }}
           files: |
             .output/**
         env:
